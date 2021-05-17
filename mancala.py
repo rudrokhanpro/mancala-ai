@@ -50,6 +50,13 @@ class Mancala:
 
             self.board[i_pit_index] += 1
 
+    def is_over(self):
+        player_marble_count = sum(self.board[:Mancala.PLAYER_MANCALA_INDEX])
+        bot_marble_count = sum(
+            self.board[Mancala.PLAYER_MANCALA_INDEX + 1: Mancala.BOT_MANCALA_INDEX])
+
+        return (player_marble_count == 0 or bot_marble_count == 0)
+
     def _get_player_pit_index(self, player, pit_number):
         """ Renvoi l'index du puit selon le joueur """
 
@@ -70,22 +77,6 @@ def main():
 
     game = Mancala()
 
-    game.show_board()
-    print("")
-
-    game.move(Mancala.PLAYER, 5)
-    game.show_board()
-    print("")
-
-    game.move(Mancala.BOT, 5)
-    game.show_board()
-    print("")
-
-    game.move(Mancala.PLAYER, 1)
-    game.show_board()
-    print("")
-
-    game.move(Mancala.BOT, 6)
     game.show_board()
 
 
