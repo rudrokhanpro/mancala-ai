@@ -1,83 +1,181 @@
-class Mancala:
-    board = [4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0]
-
-    # Nom des joueurs
-    PLAYER = "PLAYER"
-    BOT = "BOT"
-
-    # Index des mancala par joueur
-    PLAYER_MANCALA_INDEX = 6
-    BOT_MANCALA_INDEX = 13
-
+class BasePlayer:
     def __init__(self):
         pass
 
+    def get_pit_number(self):
+        pass
+
+
+class Player(BasePlayer):
+    def get_pit_number(self, game):
+        # TODO Ajouter des gestionnaires d'erreurs
+        return int(input("Enter a pit number (1-6) > "))
+
+
+class Mancala:
+    board = [0, 0, 0, 0, 1, 0, 40, 0, 0, 0, 1, 2, 2, 2]
+    current_player = None  # prochain joueur
+
+    # Index des mancala par joueur
+    PLAYER1_MANCALA_INDEX = 6
+    PLAYER2_MANCALA_INDEX = 13
+
+    def __init__(self, player1, player2):
+        self.player1 = player1
+        self.player2 = player2
+        self.current = player1
+
     def show_board(self):
         """
-            Intial board :
-                ( 4) ( 4) ( 4) ( 4) ( 4) ( 4)
-            ( 0)                             ( 0)
-                ( 4) ( 4) ( 4) ( 4) ( 4) ( 4)
+            Plateau:
+                4  4  4  4  4  4
+             4 /----------------/  4
+            >   4  4  4  4  4  4
+                1  2  3  4  5  6
         """
-        player_pits = self.board[:Mancala.PLAYER_MANCALA_INDEX]
 
-        bot_pits = self.board[Mancala.PLAYER_MANCALA_INDEX +
-                              1:Mancala.BOT_MANCALA_INDEX]
-        bot_pits.reverse()
+        # Rangée de chaque joueur
+        player1_pits = self.board[:self.PLAYER1_MANCALA_INDEX+1]
+        player2_pits = self.board[self.PLAYER1_MANCALA_INDEX +
+                                  1: self.PLAYER2_MANCALA_INDEX+1]
 
-        mancalas = self.board[Mancala.BOT_MANCALA_INDEX], self.board[
-            Mancala.PLAYER_MANCALA_INDEX]
+        # Point de vue du joueur 1
+        if self.current == self.player1:
+            top = player2_pits
+            bottom = player1_pits
+        # Point de vue du joueur 2
+        else:
+            top = player1_pits
+            bottom = player2_pits
 
-        print("    (%2s) (%2s) (%2s) (%2s) (%2s) (%2s)" % tuple(bot_pits))
-        print("(%2s)                             (%2s)" % mancalas)
-        print("    (%2s) (%2s) (%2s) (%2s) (%2s) (%2s)" % tuple(player_pits))
+        # Vue inversée sur la rangée du haut
+        top.reverse()
+        print("   %2s %2s %2s %2s %2s %2s" % tuple(top[1:]))
+        print("%2s /----------------/ %2s" % (top[0], bottom[-1]))
+        print(">  %2s %2s %2s %2s %2s %2s" % tuple(bottom[:-1]))
+        print("   %2s %2s %2s %2s %2s %2s" % (1, 2, 3, 4, 5, 6))
 
-    def move(self, player, pit_number):
-        """ Distribue les billes contenues dans un puit donnée """
-        pit_index = self._get_player_pit_index(player, pit_number)
+    def move(self, pit_number):
+        """
+            Distribue pour le joueur actuel, les billes contenues dans un puit donnée,
+            gère le système de tour
+            et retourne l'index de la derniere bille
+        """
 
-        # Collecter toutes les billes du puit
-        marble_count = self.board[pit_index]
-        self.board[pit_index] = 0
+        # Billes à répartir
+        marbles_remaining = self.get_pit_value(pit_number)
 
-        print("[{}] Déplacement de {} billes du puit n° {}".format(
-            player.ljust(len(Mancala.PLAYER)), marble_count, pit_number))
+        # Calcul de l'index du puit de départ
+        if self.current == self.player1:
+            curr_pit_index = pit_number - 1
+        else:
+            curr_pit_index = pit_number + self.PLAYER1_MANCALA_INDEX
 
-        # Pour chaque puit suivant dans le sens anti-horaire,
-        # distribuer 1 bille
-        for i in range(pit_index + 1, pit_index + 1 + marble_count):
-            i_pit_index = i % len(self.board)
+        # Collecte des billes
+        self.board[curr_pit_index] = 0
+        curr_pit_index += 1
 
-            self.board[i_pit_index] += 1
+        # Pour chaque puit conséquent à l'exception du Mancala ennemi
+        while marbles_remaining > 0:
+            if self.current == self.player1 and curr_pit_index == self.PLAYER2_MANCALA_INDEX:
+                pass
+            elif self.current == self.player2 and curr_pit_index == self.PLAYER1_MANCALA_INDEX:
+                pass
+            # Dépôt d'une bille
+            else:
+                self.board[curr_pit_index] += 1
+                marbles_remaining -= 1
+
+            curr_pit_index = (curr_pit_index + 1) % len(self.board)
+
+        # Passage de la main au joeur adverse
+        # TODO: Implémenter les règles permettant au joueur actuel de rejouer
+        self.current = self.player2 if self.current == self.player1 else self.player1
+
+    def get_pit_value(self, number):
+        """
+            Renvoi le nombre de billes contenu dans un puit
+            à l'aide de son numéro relatif au joueur actuel
+        """
+
+        if self.current == self.player1:
+            return self.board[number - 1]
+        else:
+            return self.board[self.PLAYER1_MANCALA_INDEX + number]
+
+    def get_player_pit_number(self):
+        """
+            Renvoi le numéro de puit sélectionné par le joueur actuel
+        """
+        pit_number = -1
+
+        # Demander tant que la saisie n'est pas valide
+        while (pit_number < 1 or pit_number > 6):
+            pit_number = self.current.get_pit_number(game=self)
+
+            # Numero invalide
+            if (pit_number < 1 or pit_number > 6):
+                print(f'Invalid pit number %s ! Try again please' % (pit_number))
+
+            # Verification du puit vide
+            elif (self.get_pit_value(pit_number) == 0):
+                print(f'Empty pit ! Try another one please')
+                pit_number = -1
+
+            else:
+                pass
+
+        return pit_number
 
     def is_over(self):
-        player_marble_count = sum(self.board[:Mancala.PLAYER_MANCALA_INDEX])
-        bot_marble_count = sum(
-            self.board[Mancala.PLAYER_MANCALA_INDEX + 1: Mancala.BOT_MANCALA_INDEX])
+        """ 
+            Retourne `True` si au moins un des joueurs n'a plus de billes
+            dans sa rangée à l'exception de son Mancala.
+            Sinon, retourne `False`
+        """
+        # Billes restantes de chaque joueurs
+        player1_remaining = sum(self.board[:Mancala.PLAYER1_MANCALA_INDEX])
+        player2_remaining = sum(
+            self.board[Mancala.PLAYER1_MANCALA_INDEX + 1: Mancala.PLAYER2_MANCALA_INDEX])
 
-        return (player_marble_count == 0 or bot_marble_count == 0)
+        return player1_remaining == 0 or player2_remaining == 0
 
-    def _get_player_pit_index(self, player, pit_number):
-        """ Renvoi l'index du puit selon le joueur """
+    def get_score(self):
+        """
+            Renvoi le score de la partie sous forme de tuple.
+            L'ordre est le suivant: `(J1, J2)`
+        """
 
-        # Renvoyer une erreur si le numero de puit est invalide
-        if pit_number < 1 or pit_number > 6:
-            raise ValueError(
-                'Invalid pit number %d. Pit number should be between 1 and 6' %
-                pit_number)
-        else:
-            # player: 1 => 0, 6 => 5
-            # bot:    1 => 7, 6 => 12
-            return pit_number - 1 if player == Mancala.PLAYER else Mancala.PLAYER_MANCALA_INDEX + 1 + (
-                pit_number - 1)
+        # Score de chaque joueur
+        player1_score = sum(self.board[:Mancala.PLAYER1_MANCALA_INDEX+1])
+        player2_score = sum(
+            self.board[Mancala.PLAYER1_MANCALA_INDEX + 1: Mancala.PLAYER2_MANCALA_INDEX+1])
+
+        return player1_score, player2_score
 
 
 def main():
-    print('Bienvenue sur Mancala !')
+    print('The Mancala Game')
+    player1 = Player()
+    player2 = Player()
+    game = Mancala(player1, player2)
 
-    game = Mancala()
+    while (not game.is_over()):
+        curr_player = "Player 1's  turn" if game.current == game.player1 else "Player 2's turn"
+        print(curr_player)
+        game.show_board()
 
-    game.show_board()
+        # Saisie du numéro de puit
+        pit_number = game.get_player_pit_number()
+        # Déplacement de billes en partant du puit saisi
+        game.move(pit_number)
+
+        print()
+        print()
+
+    # Fin de partie affichage du score
+    p1_score, p2_score = game.get_score()
+    print(f'Game finished ! Final score: (P1) {p1_score} - {p2_score} (P2)')
 
 
 if __name__ == '__main__':
