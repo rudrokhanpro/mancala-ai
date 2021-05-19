@@ -1,3 +1,4 @@
+# Main Menu
 def main():
     print ("Welcome to Mancala,\n")
     print ("Please choose the mode you want to play:")
@@ -25,7 +26,7 @@ def main():
 
      
 
-# Menu 2
+# Menu VS AI with Difficulty Modes
 def menu2():
     print ("You selected Player vs AI \n")
     print ("Please select your difficulty :")
