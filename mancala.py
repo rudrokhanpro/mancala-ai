@@ -13,14 +13,12 @@ class Player(BasePlayer):
 
 
 class Mancala:
-    board = [0, 0, 0, 0, 1, 0, 40, 0, 0, 0, 1, 2, 2, 2]
-    current_player = None  # prochain joueur
-
     # Index des mancala par joueur
     PLAYER1_MANCALA_INDEX = 6
     PLAYER2_MANCALA_INDEX = 13
 
     def __init__(self, player1, player2):
+        self.board = [0, 0, 0, 0, 10, 0, 40, 0, 0, 0, 1, 2, 2, 2]
         self.player1 = player1
         self.player2 = player2
         self.current = player1
@@ -59,7 +57,6 @@ class Mancala:
         """
             Distribue pour le joueur actuel, les billes contenues dans un puit donnée,
             gère le système de tour
-            et retourne l'index de la derniere bille
         """
 
         # Billes à répartir
@@ -88,9 +85,17 @@ class Mancala:
 
             curr_pit_index = (curr_pit_index + 1) % len(self.board)
 
-        # Passage de la main au joeur adverse
         # TODO: Implémenter les règles permettant au joueur actuel de rejouer
-        self.current = self.player2 if self.current == self.player1 else self.player1
+        # Index de la dernière bille déposée, équivalent à "reculer d'un puit dans le sens inverse"
+        last_marble_index = (curr_pit_index - 1) % len(self.board)
+        curr_player_mancala = self.PLAYER1_MANCALA_INDEX if self.current == self.player1 else self.PLAYER2_MANCALA_INDEX
+
+        # Si la dernière bille est déposé dans le Mancala allié alors le joueur actuel rejoue
+        if last_marble_index == curr_player_mancala:
+            self.current = self.current
+        # Passage de la main au joeur adverse
+        else:
+            self.current = self.player2 if self.current == self.player1 else self.player1
 
     def get_pit_value(self, number):
         """
@@ -161,17 +166,20 @@ def main():
     game = Mancala(player1, player2)
 
     while (not game.is_over()):
-        curr_player = "Player 1's  turn" if game.current == game.player1 else "Player 2's turn"
-        print(curr_player)
+        curr_player = "Player 1" if game.current == game.player1 else "Player 2"
+        print(f'[INFO] {curr_player}\'s turn')
+
+        print()
         game.show_board()
+        print()
 
         # Saisie du numéro de puit
         pit_number = game.get_player_pit_number()
+        pit_value = game.get_pit_value(pit_number)
         # Déplacement de billes en partant du puit saisi
+        print(
+            f'[MOVE] {curr_player} moved {pit_value} marbles from pit n°{pit_value}')
         game.move(pit_number)
-
-        print()
-        print()
 
     # Fin de partie affichage du score
     p1_score, p2_score = game.get_score()
