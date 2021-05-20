@@ -229,6 +229,14 @@ class Mancala:
 
         return player1_score, player2_score
 
+    def clone(self):
+        """ Renvoi un clone de la partie càd même valeurs """
+        cloned_game = Mancala(self.player1, self.player2)
+        cloned_game.board = list(self.board)
+        cloned_game.current = self.current
+
+        return cloned_game
+
     def _is_player1(self):
         """ `True` si le joueur actuel est le joueur 1. `False` sinon """
         return self.current == self.player1
