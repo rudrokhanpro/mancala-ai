@@ -3,7 +3,9 @@
     Amine 1 - 0 Rudro
 """
 
-from players import Player
+from colorama import init, Fore, Back, Style
+
+init()
 
 
 class Mancala:
@@ -41,10 +43,21 @@ class Mancala:
 
         # Vue inversée sur la rangée du haut
         top.reverse()
-        print("   %2s %2s %2s %2s %2s %2s" % tuple(top[1:]))
-        print("%2s /----------------/ %2s" % (top[0], bottom[-1]))
-        print(">  %2s %2s %2s %2s %2s %2s" % tuple(bottom[:-1]))
-        print("   %2s %2s %2s %2s %2s %2s" % (1, 2, 3, 4, 5, 6))
+
+        # Version non colorée
+        # print("   %2s %2s %2s %2s %2s %2s" % tuple(top[1:]))
+        # print("%2s /----------------/ %2s" % (top[0], bottom[-1]))
+        # print(">  %2s %2s %2s %2s %2s %2s" % tuple(bottom[:-1]))
+        # print("   %2s %2s %2s %2s %2s %2s" % (1, 2, 3, 4, 5, 6))
+
+        # Version colorée
+        print((Fore.RED + "   %2s %2s %2s %2s %2s %2s") % tuple(top[1:]))
+        print(((Fore.RED + "%2s ") + (Fore.YELLOW + "/----------------/") +
+              (Fore.WHITE + " %2s")) % (top[0], bottom[-1]))
+        print((Fore.WHITE + ">  %2s %2s %2s %2s %2s %2s") % tuple(bottom[:-1]))
+        print((Fore.YELLOW + "   %2s %2s %2s %2s %2s %2s") %
+              (1, 2, 3, 4, 5, 6))
+        print(Style.RESET_ALL, end="")
 
     def move(self, pit_number):
         """
@@ -95,17 +108,19 @@ class Mancala:
                 and (last_marble_index >= 0 and last_marble_index <= 6):
             opposite_pit_index = 12 - last_marble_index
 
-            # Collecte des billes ennemies
+            # Collecte des billes ennemies s'il y en a
             enemy_marbles = self.board[opposite_pit_index]
-            self.board[opposite_pit_index] = 0
-            # Collecte de la bille récemment déposée
-            self.board[last_marble_index] = 0
-            # Ajout au Mancala du joueur
-            self.board[self.PLAYER1_MANCALA_INDEX] += (1 + enemy_marbles)
 
-            print(
-                f'[CAPTURE] Capture of {enemy_marbles + 1} marbles'
-            )
+            if self.board[opposite_pit_index] > 0:
+                self.board[opposite_pit_index] = 0
+                # Collecte de la bille récemment déposée
+                self.board[last_marble_index] = 0
+                # Ajout au Mancala du joueur
+                self.board[self.PLAYER1_MANCALA_INDEX] += (1 + enemy_marbles)
+
+                print(
+                    f'[CAPTURE] Capture of {enemy_marbles + 1} marbles'
+                )
 
             # Passage de tour
             self._next_player()
@@ -117,15 +132,17 @@ class Mancala:
 
             # Collecte des billes ennemies
             enemy_marbles = self.board[opposite_pit_index]
-            self.board[opposite_pit_index] = 0
-            # Collecte de la bille récemment déposée
-            self.board[last_marble_index] = 0
-            # Ajout au Mancala du joueur
-            self.board[self.PLAYER2_MANCALA_INDEX] += (1 + enemy_marbles)
 
-            print(
-                f'[CAPTURE] Capture of {enemy_marbles + 1} marbles'
-            )
+            if self.board[opposite_pit_index] > 0:
+                self.board[opposite_pit_index] = 0
+                # Collecte de la bille récemment déposée
+                self.board[last_marble_index] = 0
+                # Ajout au Mancala du joueur
+                self.board[self.PLAYER2_MANCALA_INDEX] += (1 + enemy_marbles)
+
+                print(
+                    f'[CAPTURE] Capture of {enemy_marbles + 1} marbles'
+                )
 
             # Passage de tour
             self._next_player()
