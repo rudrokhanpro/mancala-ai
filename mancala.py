@@ -1,3 +1,9 @@
+""" SCOREBOARD
+
+    Amine 1 - 0 Rudro
+"""
+
+
 class BasePlayer:
     def __init__(self):
         pass
@@ -18,7 +24,7 @@ class Mancala:
     PLAYER2_MANCALA_INDEX = 13
 
     def __init__(self, player1, player2):
-        self.board = [0, 0, 0, 0, 10, 0, 40, 0, 0, 0, 1, 2, 2, 2]
+        self.board = [4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0]
         self.player1 = player1
         self.player2 = player2
         self.current = player1
@@ -31,14 +37,13 @@ class Mancala:
             >   4  4  4  4  4  4
                 1  2  3  4  5  6
         """
-
         # Rangée de chaque joueur
         player1_pits = self.board[:self.PLAYER1_MANCALA_INDEX+1]
         player2_pits = self.board[self.PLAYER1_MANCALA_INDEX +
                                   1: self.PLAYER2_MANCALA_INDEX+1]
 
         # Point de vue du joueur 1
-        if self.current == self.player1:
+        if self._is_player1():
             top = player2_pits
             bottom = player1_pits
         # Point de vue du joueur 2
@@ -58,12 +63,11 @@ class Mancala:
             Distribue pour le joueur actuel, les billes contenues dans un puit donnée,
             gère le système de tour
         """
-
         # Billes à répartir
         marbles_remaining = self.get_pit_value(pit_number)
 
         # Calcul de l'index du puit de départ
-        if self.current == self.player1:
+        if self._is_player1():
             curr_pit_index = pit_number - 1
         else:
             curr_pit_index = pit_number + self.PLAYER1_MANCALA_INDEX
@@ -74,9 +78,9 @@ class Mancala:
 
         # Pour chaque puit conséquent à l'exception du Mancala ennemi
         while marbles_remaining > 0:
-            if self.current == self.player1 and curr_pit_index == self.PLAYER2_MANCALA_INDEX:
+            if self._is_player1() and curr_pit_index == self.PLAYER2_MANCALA_INDEX:
                 pass
-            elif self.current == self.player2 and curr_pit_index == self.PLAYER1_MANCALA_INDEX:
+            elif self._is_player2() and curr_pit_index == self.PLAYER1_MANCALA_INDEX:
                 pass
             # Dépôt d'une bille
             else:
@@ -85,25 +89,69 @@ class Mancala:
 
             curr_pit_index = (curr_pit_index + 1) % len(self.board)
 
-        # TODO: Implémenter les règles permettant au joueur actuel de rejouer
         # Index de la dernière bille déposée, équivalent à "reculer d'un puit dans le sens inverse"
         last_marble_index = (curr_pit_index - 1) % len(self.board)
-        curr_player_mancala = self.PLAYER1_MANCALA_INDEX if self.current == self.player1 else self.PLAYER2_MANCALA_INDEX
+        curr_player_mancala = self.PLAYER1_MANCALA_INDEX if self._is_player1(
+        ) else self.PLAYER2_MANCALA_INDEX
 
-        # Si la dernière bille est déposé dans le Mancala allié alors le joueur actuel rejoue
+        # Si la dernière bille est déposée dans le Mancala allié alors le joueur actuel rejoue
         if last_marble_index == curr_player_mancala:
-            self.current = self.current
-        # Passage de la main au joeur adverse
+            self._play_again()
+
+        # Si    la dernière bille est déposée dans un puit allié auparavant vide
+        #       et le puit est dans la rangée allié
+        # alors le joueur récupère les billes du puit ennemi situé à l'opposée
+        #       ainsi que la bille déposée
+        # Pour le joueur 1:
+        elif self._is_player1() and self.get_pit_value(last_marble_index + 1) - 1 == 0 \
+                and (last_marble_index >= 0 and last_marble_index <= 6):
+            opposite_pit_index = 12 - last_marble_index
+
+            # Collecte des billes ennemies
+            enemy_marbles = self.board[opposite_pit_index]
+            self.board[opposite_pit_index] = 0
+            # Collecte de la bille récemment déposée
+            self.board[last_marble_index] = 0
+            # Ajout au Mancala du joueur
+            self.board[self.PLAYER1_MANCALA_INDEX] += (1 + enemy_marbles)
+
+            print(
+                f'[CAPTURE] Capture of {enemy_marbles + 1} marbles'
+            )
+
+            # Passage de tour
+            self._next_player()
+
+        # Pour le joueur 2:
+        elif self._is_player2() and self.get_pit_value(last_marble_index - 7 + 1) - 1 == 0 \
+                and (last_marble_index >= 7 and last_marble_index <= 12):
+            opposite_pit_index = 12 - last_marble_index
+
+            # Collecte des billes ennemies
+            enemy_marbles = self.board[opposite_pit_index]
+            self.board[opposite_pit_index] = 0
+            # Collecte de la bille récemment déposée
+            self.board[last_marble_index] = 0
+            # Ajout au Mancala du joueur
+            self.board[self.PLAYER2_MANCALA_INDEX] += (1 + enemy_marbles)
+
+            print(
+                f'[CAPTURE] Capture of {enemy_marbles + 1} marbles'
+            )
+
+            # Passage de tour
+            self._next_player()
+
+        # Si aucune ne s'applique alors passer la main au joueur ennemi
         else:
-            self.current = self.player2 if self.current == self.player1 else self.player1
+            self._next_player()
 
     def get_pit_value(self, number):
         """
             Renvoi le nombre de billes contenu dans un puit
             à l'aide de son numéro relatif au joueur actuel
         """
-
-        if self.current == self.player1:
+        if self._is_player1():
             return self.board[number - 1]
         else:
             return self.board[self.PLAYER1_MANCALA_INDEX + number]
@@ -150,13 +198,28 @@ class Mancala:
             Renvoi le score de la partie sous forme de tuple.
             L'ordre est le suivant: `(J1, J2)`
         """
-
         # Score de chaque joueur
         player1_score = sum(self.board[:Mancala.PLAYER1_MANCALA_INDEX+1])
         player2_score = sum(
             self.board[Mancala.PLAYER1_MANCALA_INDEX + 1: Mancala.PLAYER2_MANCALA_INDEX+1])
 
         return player1_score, player2_score
+
+    def _is_player1(self):
+        """ `True` si le joueur actuel est le joueur 1. `False` sinon """
+        return self.current == self.player1
+
+    def _is_player2(self):
+        """ `True` si le joueur actuel est le joueur 2. `False` sinon """
+        return self.current == self.player2
+
+    def _play_again(self):
+        """ Le joueur actuel rejoue au prochain tour """
+        self.current = self.current
+
+    def _next_player(self):
+        """ Passe la main au joueur ennemi """
+        self.current = self.player2 if self._is_player1() else self.player1
 
 
 def main():
@@ -178,7 +241,7 @@ def main():
         pit_value = game.get_pit_value(pit_number)
         # Déplacement de billes en partant du puit saisi
         print(
-            f'[MOVE] {curr_player} moved {pit_value} marbles from pit n°{pit_value}')
+            f'[MOVE] {curr_player} moved {pit_value} marbles from pit n°{pit_number}')
         game.move(pit_number)
 
     # Fin de partie affichage du score
