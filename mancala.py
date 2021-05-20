@@ -1,6 +1,7 @@
 """ SCOREBOARD
 
     Amine 1 - 0 Rudro
+    Daniel 1 - 0 Rudro
 """
 
 from colorama import init, Fore, Back, Style
@@ -184,6 +185,24 @@ class Mancala:
                 pass
 
         return pit_number
+
+    def get_available_pits(self):
+        """ Renvoi une liste de numéros de puits non-vide """
+        # Récupération des puits du joueur actuel
+        if self._is_player1():
+            pits = self.board[:self.PLAYER1_MANCALA_INDEX]
+        else:
+            pits = self.board[self.PLAYER1_MANCALA_INDEX +
+                              1: self.PLAYER2_MANCALA_INDEX]
+
+        # Liste de numéros de puit non-vide
+        non_empty_pits = []
+
+        for i in range(len(pits)):
+            if pits[i] != 0:
+                non_empty_pits.append(i + 1)
+
+        return non_empty_pits
 
     def is_over(self):
         """ 

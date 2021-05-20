@@ -1,13 +1,20 @@
-from players import Player
+from players import Player, TutorialPlayer
 from mancala import Mancala
 
 
 def main():
     print('The Mancala Game')
     player1 = Player()
-    player2 = Player()
+
+    # # JvsJ
+    # player2 = Player()
+
+    # J vs IA niveau Tutoriel
+    player2 = TutorialPlayer()
+
     game = Mancala(player1, player2)
 
+    # Boucle de jeu ne s'arretant seulement si la partie est terminée
     while (not game.is_over()):
         curr_player = "Player 1" if game.current == game.player1 else "Player 2"
         print(f'[INFO] {curr_player}\'s turn')
