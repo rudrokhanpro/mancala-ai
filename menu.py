@@ -12,8 +12,10 @@ def main():
 
         if option == 1:
             print ("You selected Player vs Player \n")
-            # call player vs player mode
-            
+            player1 = Player()
+            player2 = MaximizingPlayer()
+            game = Mancala(player1, player2)
+                     
         elif option == 2:
             menu2()
 
@@ -43,20 +45,28 @@ def menu2():
 
         if option == 1:
             print ("You selected Tutorial mode \n")
-            #Call game mode
-            
+            player1 = Player()
+            player2 = TutorialPlayer()
+            game = Mancala(player1, player2)
+
         elif option == 2:
             print ("You selected Easy Mode \n")
-            #Call game mode
+            player1 = Player()
+            player2 = MaximizingPlayer()
+            game = Mancala(player1, player2)
 
         elif option == 3:
             print ("You selected Medium Mode \n")
-            #Call game mode
+            player1 = Player()
+            player2 = MediumPlayer()
+            game = Mancala(player1, player2)
 
         elif option == 4:
             print ("You selected Extreme Mode")
             print ("Good luck ! :) \n")
-            #Call game mode
+            player1 = Player()
+            player2 = ExtremePlayer()
+            game = Mancala(player1, player2)
 
         elif option == 9:
             main()
