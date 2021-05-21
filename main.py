@@ -1,16 +1,19 @@
-from players import Player, TutorialPlayer, MaximizingPlayer
+from players import MediumPlayer, Player, TutorialPlayer
 from mancala import Mancala
 
 
 def main():
-    print('The Mancala Game')
+    # print('The Mancala Game')
     player1 = Player()
 
     # # JvsJ
     # player2 = Player()
 
     # J vs IA niveau Tutoriel
-    player2 = MaximizingPlayer()
+    # player1 = TutorialPlayer()
+
+    # J vs IA niveau Intermédiaire
+    player2 = MediumPlayer()
 
     game = Mancala(player1, player2)
 
@@ -33,7 +36,8 @@ def main():
 
     # Fin de partie affichage du score
     p1_score, p2_score = game.get_score()
-    print(f'Game finished ! Final score: (P1) {p1_score} - {p2_score} (P2)')
+    print(
+        f'Game finished ! Final score: (P1) {p1_score} - {p2_score} (P2)')
 
 
 if __name__ == '__main__':

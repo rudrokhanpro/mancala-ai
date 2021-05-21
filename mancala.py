@@ -52,6 +52,8 @@ class Mancala:
         # print("   %2s %2s %2s %2s %2s %2s" % (1, 2, 3, 4, 5, 6))
 
         # Version colorée
+        print((Fore.YELLOW + "   %2s %2s %2s %2s %2s %2s") %
+              (6, 5, 4, 3, 2, 1))
         print((Fore.RED + "   %2s %2s %2s %2s %2s %2s") % tuple(top[1:]))
         print(((Fore.RED + "%2s ") + (Fore.YELLOW + "/----------------/") +
               (Fore.WHITE + " %2s")) % (top[0], bottom[-1]))
@@ -60,7 +62,7 @@ class Mancala:
               (1, 2, 3, 4, 5, 6))
         print(Style.RESET_ALL, end="")
 
-    def move(self, pit_number):
+    def move(self, pit_number, silent=False):
         """
             Distribue pour le joueur actuel, les billes contenues dans un puit donnée,
             gère le système de tour
@@ -119,9 +121,11 @@ class Mancala:
                 # Ajout au Mancala du joueur
                 self.board[self.PLAYER1_MANCALA_INDEX] += (1 + enemy_marbles)
 
-                print(
-                    f'[CAPTURE] Capture of {enemy_marbles + 1} marbles'
-                )
+                if not silent:
+                    player = 'P1' if self._is_player1() else 'P2 (AI)'
+                    print(
+                        f'[CAPTURE] Capture of {enemy_marbles + 1} marbles by {player}'
+                    )
 
             # Passage de tour
             self._next_player()
@@ -141,9 +145,11 @@ class Mancala:
                 # Ajout au Mancala du joueur
                 self.board[self.PLAYER2_MANCALA_INDEX] += (1 + enemy_marbles)
 
-                print(
-                    f'[CAPTURE] Capture of {enemy_marbles + 1} marbles'
-                )
+                if not silent:
+                    player = 'P1' if self._is_player1() else 'P2 (AI)'
+                    print(
+                        f'[CAPTURE] Capture of {enemy_marbles + 1} marbles by {player}'
+                    )
 
             # Passage de tour
             self._next_player()
@@ -178,7 +184,7 @@ class Mancala:
 
             # Verification du puit vide
             elif (self.get_pit_value(pit_number) == 0):
-                print(f'Empty pit ! Try another one please')
+                print(f'Pit n°{pit_number} is empty ! Try another one please')
                 pit_number = -1
 
             else:
@@ -230,6 +236,7 @@ class Mancala:
         return player1_score, player2_score
 
     def get_player_score(self, player):
+<<<<<<< HEAD
             """ Renvoi le score d'un joueur """
             if self._is_player1():
                 return self.board[self.PLAYER1_MANCALA_INDEX]
@@ -237,6 +244,13 @@ class Mancala:
 
         # ex: Score du joueur actuel: game.get_playe_score(game.current)
  
+=======
+        """ Renvoi le score d'un joueur """
+        if player == self.player1:
+            return self.board[self.PLAYER1_MANCALA_INDEX]
+        else:
+            return self.board[self.PLAYER2_MANCALA_INDEX]
+>>>>>>> 9b0358f (Add of Minmax algorithm in MediumPlayer)
 
     def clone(self):
         """ Renvoi un clone de la partie càd même valeurs """
