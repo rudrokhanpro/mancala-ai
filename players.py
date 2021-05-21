@@ -71,7 +71,7 @@ class MediumPlayer(BasePlayer):
         L'heuristique utilisée est le score que l'IA peut espérér
     """
 
-    DEPTH = 6
+    DEPTH = 4
 
     def get_pit_number(self, game: Mancala):
         # Pour chaque choix valide, calculer son score potentiel
