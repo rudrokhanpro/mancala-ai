@@ -14,7 +14,7 @@ class Mancala:
     PLAYER1_MANCALA_INDEX = 6
     PLAYER2_MANCALA_INDEX = 13
 
-    def __init__(self, player1, player2, rotate_board):
+    def __init__(self, player1, player2, rotate_board=False):
         self.board = [4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0]
         self.player1 = player1
         self.player2 = player2
