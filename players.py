@@ -12,8 +12,16 @@ class BasePlayer:
 
 class Player(BasePlayer):
     def get_pit_number(self, game: Mancala):
-        # TODO Ajouter des gestionnaires d'erreurs
-        return int(input(">> Enter a pit number (1-6): "))
+        while True:
+            try:
+                value = int(input(">> Enter a pit number (1-6): "))
+            except ValueError:
+                print("Invalid input, please input an integer")
+                continue
+            else:
+                return value
+                break
+
 
 
 class TutorialPlayer(BasePlayer):
