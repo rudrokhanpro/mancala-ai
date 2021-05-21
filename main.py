@@ -1,4 +1,4 @@
-from players import MaximizingPlayer, MediumPlayer, Player, TutorialPlayer
+from players import Player, TutorialPlayer, MaximizingPlayer, MinMaxPlayer
 from mancala import Mancala
 
 
@@ -22,7 +22,7 @@ def main():
                 player2 = MaximizingPlayer()
             elif option == 4:
                 print("[INFO] You have choose Player vs AI (Medium)")
-                player2 = MediumPlayer()
+                player2 = MinMaxPlayer()
             elif option == 0:
                 exit()
             else:
