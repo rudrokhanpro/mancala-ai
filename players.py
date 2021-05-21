@@ -71,7 +71,7 @@ class MinMaxPlayer(BasePlayer):
     """
 
     DEPTH = 4
-    pruning = True
+    pruning = False
     # counter = 0
 
     def get_pit_number(self, game: Mancala):
@@ -90,11 +90,11 @@ class MinMaxPlayer(BasePlayer):
                     clone, avail_pit, self.DEPTH, alpha, beta)
             else:
                 future_score = self.minmax(clone, avail_pit, self.DEPTH)
-
+                _, my_future_score = future_score
             # self.counter += 1
 
             # Sauvegarde des scores
-            avalaible_scores.append(future_score)
+            avalaible_scores.append(my_future_score)
 
         # Retenir uniquement le meilleur score
         best_score = max(avalaible_scores)
@@ -130,25 +130,31 @@ class MinMaxPlayer(BasePlayer):
 
         # Si nombre de tours épuissés, renvoyer le score potentiel de l'IA
         if depth == 0:
-            return clone.get_player_score(clone.player2)
+            return clone.get_score()
 
         # Choix de l'agent
-        maximizer = clone.current == clone.player1
+        maximizer = clone.current == clone.player2
 
         # Simulation des nouveaux choix légaux après le choix précedamment éffectué
         avalaible_pits = clone.get_available_pits()
-        best_score = clone.get_player_score(clone.player2)
+        best_score = clone.get_score()
+        enemy_best_score, my_best_score = best_score
 
         for avail_pit in avalaible_pits:
             # Nouveau score potentiel après la suite des choix précedamment éffectué
             new_score = self.minmax(clone, avail_pit, depth-1)
+            enemy_new_score, my_new_score = new_score
+
             # self.counter += 1
 
             # Si c'est le tour de l'agent Maximisant càd l'IA
-            if maximizer:
-                best_score = max(new_score, best_score)
+            if maximizer and my_new_score > my_best_score:
+                best_score = new_score
+                my_best_score = my_new_score
             else:
-                best_score = min(new_score, best_score)
+                if my_new_score < my_best_score or enemy_new_score > enemy_best_score:
+                    best_score = new_score
+                    my_best_score = my_new_score
 
         return best_score
 
@@ -164,18 +170,17 @@ class MinMaxPlayer(BasePlayer):
 
         # Si nombre de tours épuissés, renvoyer le score potentiel de l'IA
         if depth == 0:
-            return clone.get_player_score(clone.player2)
+            # return clone.get_player_score(clone.player2)
+            return clone.get_score()
 
         # Choix de l'agent
-        maximizer = clone.current == clone.player1
+        maximizer = clone.current == clone.player2
 
         # Simulation des nouveaux choix légaux après le choix précedamment éffectué
         avalaible_pits = clone.get_available_pits()
 
-        if maximizer:
-            best_score = -sys.maxsize
-        else:
-            best_score = sys.maxsize
+        best_score = clone.get_score()
+        enemy_best_score, my_best_score = best_score
 
         for avail_pit in avalaible_pits:
             # Nouveau score potentiel après la suite des choix précedamment éffectué
@@ -184,13 +189,20 @@ class MinMaxPlayer(BasePlayer):
             # self.counter += 1
 
             # Si c'est le tour de l'agent Maximisant càd l'IA
+            enemy_new_score, my_new_score = new_score
+
             if maximizer:
-                best_score = max(new_score, best_score)
-                alpha = max(best_score, alpha)
+                if my_new_score > my_best_score:
+                    best_score = new_score
+                    my_best_score = my_new_score
+
+                alpha = max(my_best_score, alpha)
 
             else:
-                best_score = min(new_score, best_score)
-                beta = min(best_score, beta)
+                if my_new_score < my_best_score or enemy_new_score > enemy_best_score:
+                    best_score = new_score
+                    my_best_score = my_new_score
+                beta = max(my_best_score, beta)
 
             # Condition d'arrêt
             if beta <= alpha:
