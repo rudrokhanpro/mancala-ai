@@ -1,21 +1,59 @@
-from players import MediumPlayer, Player, TutorialPlayer
+from players import MaximizingPlayer, MediumPlayer, Player, TutorialPlayer
 from mancala import Mancala
 
 
 def main():
-    # print('The Mancala Game')
-    player1 = Player()
+    print_menu()
 
-    # # JvsJ
-    # player2 = Player()
+    while True:
+        try:
+            option = int(input('>> '))
 
-    # J vs IA niveau Tutoriel
-    # player1 = TutorialPlayer()
+            player1 = Player()
 
-    # J vs IA niveau Intermédiaire
-    player2 = MediumPlayer()
+            if option == 1:
+                print("[INFO] You have choose Player vs Player")
+                player2 = Player()
+            elif option == 2:
+                print("[INFO] You have choose Player vs AI (Tutorial)")
+                player2 = TutorialPlayer()
+            elif option == 3:
+                print("[INFO] You have choose Player vs AI (Easy)")
+                player2 = MaximizingPlayer()
+            elif option == 4:
+                print("[INFO] You have choose Player vs AI (Medium)")
+                player2 = MediumPlayer()
+            elif option == 0:
+                exit()
+            else:
+                raise ValueError()
 
-    game = Mancala(player1, player2)
+            start_game(
+                player1=player1,
+                player2=player2
+            )
+
+            print_menu()
+
+        except ValueError:
+            print('Enter a valid option. Accepted options: 1, 2, 3, 4, 0')
+
+
+def print_menu():
+    print("Welcome to Mancala")
+    print()
+    print("[MENU] Please choose the mode you want to play:")
+    print("\t[1] Player vs Player")
+    print("\t[2] Player vs AI (Tutorial)")
+    print("\t[3] Player vs AI (Easy)")
+    print("\t[4] Player vs AI (Medium)")
+    print("\t[0] Quit")
+
+
+def start_game(player1, player2):
+    """ Lance la partie avec les joeurs indiquées """
+
+    game = Mancala(player1=player1, player2=player2)
 
     # Boucle de jeu ne s'arretant seulement si la partie est terminée
     while (not game.is_over()):
