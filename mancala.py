@@ -236,21 +236,11 @@ class Mancala:
         return player1_score, player2_score
 
     def get_player_score(self, player):
-<<<<<<< HEAD
-            """ Renvoi le score d'un joueur """
-            if self._is_player1():
-                return self.board[self.PLAYER1_MANCALA_INDEX]
-            else: return self.board[self.PLAYER2_MANCALA_INDEX]
-
-        # ex: Score du joueur actuel: game.get_playe_score(game.current)
- 
-=======
         """ Renvoi le score d'un joueur """
         if player == self.player1:
             return self.board[self.PLAYER1_MANCALA_INDEX]
         else:
             return self.board[self.PLAYER2_MANCALA_INDEX]
->>>>>>> 9b0358f (Add of Minmax algorithm in MediumPlayer)
 
     def clone(self):
         """ Renvoi un clone de la partie càd même valeurs """
