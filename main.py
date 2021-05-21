@@ -1,4 +1,4 @@
-from players import Player, TutorialPlayer
+from players import Player, TutorialPlayer, MaximizingPlayer
 from mancala import Mancala
 
 
@@ -10,7 +10,7 @@ def main():
     # player2 = Player()
 
     # J vs IA niveau Tutoriel
-    player2 = TutorialPlayer()
+    player2 = MaximizingPlayer()
 
     game = Mancala(player1, player2)
 

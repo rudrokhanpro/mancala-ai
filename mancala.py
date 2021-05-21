@@ -229,6 +229,15 @@ class Mancala:
 
         return player1_score, player2_score
 
+    def get_player_score(self, player):
+            """ Renvoi le score d'un joueur """
+            if self._is_player1():
+                return self.board[self.PLAYER1_MANCALA_INDEX]
+            else: return self.board[self.PLAYER2_MANCALA_INDEX]
+
+        # ex: Score du joueur actuel: game.get_playe_score(game.current)
+ 
+
     def clone(self):
         """ Renvoi un clone de la partie càd même valeurs """
         cloned_game = Mancala(self.player1, self.player2)
