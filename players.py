@@ -71,7 +71,7 @@ class MinMaxPlayer(BasePlayer):
     """
 
     DEPTH = 4
-    pruning = False
+    pruning = True
     # counter = 0
 
     def get_pit_number(self, game: Mancala):
@@ -90,7 +90,7 @@ class MinMaxPlayer(BasePlayer):
                     clone, avail_pit, self.DEPTH, alpha, beta)
             else:
                 future_score = self.minmax(clone, avail_pit, self.DEPTH)
-                _, my_future_score = future_score
+            _, my_future_score = future_score
             # self.counter += 1
 
             # Sauvegarde des scores
