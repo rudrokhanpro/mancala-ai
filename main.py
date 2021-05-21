@@ -28,9 +28,13 @@ def main():
             else:
                 raise ValueError()
 
+            ai_options = [2, 3, 4]
+
             start_game(
                 player1=player1,
-                player2=player2
+                player2=player2,
+                # Ne pas pivoter le plateau lorsqu'on joue contre une IA
+                rotate_board=(option not in ai_options)
             )
 
             print_menu()
@@ -50,10 +54,14 @@ def print_menu():
     print("\t[0] Quit")
 
 
-def start_game(player1, player2):
+def start_game(player1, player2, rotate_board):
     """ Lance la partie avec les joeurs indiquées """
 
-    game = Mancala(player1=player1, player2=player2)
+    game = Mancala(
+        player1=player1,
+        player2=player2,
+        rotate_board=rotate_board
+    )
 
     # Boucle de jeu ne s'arretant seulement si la partie est terminée
     while (not game.is_over()):

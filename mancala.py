@@ -14,11 +14,12 @@ class Mancala:
     PLAYER1_MANCALA_INDEX = 6
     PLAYER2_MANCALA_INDEX = 13
 
-    def __init__(self, player1, player2):
+    def __init__(self, player1, player2, rotate_board):
         self.board = [4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0]
         self.player1 = player1
         self.player2 = player2
         self.current = player1
+        self.rotate_board = rotate_board
 
     def show_board(self):
         """
@@ -34,7 +35,8 @@ class Mancala:
                                   1: self.PLAYER2_MANCALA_INDEX+1]
 
         # Point de vue du joueur 1
-        if self._is_player1():
+        # Garder ce point de vue si l'option `rotate_board` est désactivée
+        if (not self.rotate_board) or self._is_player1():
             top = player2_pits
             bottom = player1_pits
         # Point de vue du joueur 2
