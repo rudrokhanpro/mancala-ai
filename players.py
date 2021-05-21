@@ -192,6 +192,7 @@ class MinMaxPlayer(BasePlayer):
             enemy_new_score, my_new_score = new_score
 
             if maximizer:
+                # Mise à jour du meilleur score pour l'IA
                 if my_new_score > my_best_score:
                     best_score = new_score
                     my_best_score = my_new_score
@@ -199,6 +200,7 @@ class MinMaxPlayer(BasePlayer):
                 alpha = max(my_best_score, alpha)
 
             else:
+                # Mise à jour du meilleur score pour l'IA et le sien
                 if my_new_score < my_best_score or enemy_new_score > enemy_best_score:
                     best_score = new_score
                     my_best_score = my_new_score
