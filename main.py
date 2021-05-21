@@ -56,6 +56,16 @@ def print_menu():
 
 def start_game(player1, player2, rotate_board):
     """ Lance la partie avec les joeurs indiquées """
+    print(" ----------------------------------------------------")
+    print("|\t\t/!\  HOW TO PLAY  /!\\                |")
+    print(" ----------------------------------------------------")
+    print("START : At the start of the game each pit has 4 stones\n")
+    print("MOVE : Select a pit from 1-6 to move the stones in an anti-clockwise direction\n")
+    print("RE-TURN : When the last stone ends in your Mancala, you can play again\n")
+    print("SCORE : Scores are counted in your Mancala (left and right extremities)")
+    print("\tWhen a stone you moved passes in your Mancala you add +1 point\n")
+    print("END : The game ends when either your side or the enemy side has no more playable pit")
+    print("     We count the stones in your Mancala + the stones on your side to determine the winner\n")
 
     game = Mancala(
         player1=player1,
